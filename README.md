@@ -1,2 +1,2 @@
-# blockchain-decentralized-network
-Blockchain Decentralized Network Across multiple nodes.
+# my-blockchain
+Blockchain written in Javascript
