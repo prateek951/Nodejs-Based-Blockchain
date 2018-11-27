@@ -5,7 +5,11 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon ./development/API.js"
+    "node_1": "nodemon ./development/API_NODE.js 3001",
+    "node_2": "nodemon ./development/API_NODE.js 3002",
+    "node_3": "nodemon ./development/API_NODE.js 3003",
+    "node_4": "nodemon ./development/API_NODE.js 3004",
+    "node_5": "nodemon ./development/API_NODE.js 3005"
   },
   "repository": {
     "type": "git",
