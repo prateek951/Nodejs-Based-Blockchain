@@ -113,4 +113,12 @@ exports.registerNode = (req, res, next) => {
     });
 };
 
-exports.registerMultipleNodes = (req, res, next) => {};
+exports.registerMultipleNodes = (req, res, next) => {
+  const { allNetworkNodes } = req.body;
+  allNetworkNodes.forEach(NETWORK_NODE_URL => {
+    const nodeNotAlreadyPresent = bitcoin.NETWORK_NODES.indexOf(NETWORK_NODE_URL) <= -1;
+    const notCurrentNode = bitcoin.CURRENT_NODE_URL !== NETWORK_NODE_URL;
+    if(nodeNotAlreadyPresent && notCurrentNode)
+      bitcoin.NETWORK_NODES.push(NETWORK_NODE_URL);
+  })
+};
