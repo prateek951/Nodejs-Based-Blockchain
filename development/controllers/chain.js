@@ -43,7 +43,7 @@ exports.mineBlock = (req, res, next) => {
   );
 
   /**  Reward the miner with 12.5 BTC*/
-  bitcoin.createNewTransaction(12.5, "00",NODE_ADDRESS);
+  bitcoin.createNewTransaction(12.5, "00", NODE_ADDRESS);
   /** Now mine a new block */
   const newBlock = bitcoin.addBlock(nonce, previousBlockHash, blockHash);
 
@@ -51,3 +51,11 @@ exports.mineBlock = (req, res, next) => {
     .status(OK)
     .json({ message: "New Block Mined Successfully!", block: newBlock });
 };
+
+exports.registerAndBroadcast = (req, res, next) => {
+  const { NEW_NODE_URL } = req.body;
+};
+
+exports.registerNode = (req, res, next) => {};
+
+exports.registerMultipleNodes = (req, res, next) => {};

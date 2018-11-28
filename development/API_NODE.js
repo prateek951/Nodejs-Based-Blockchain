@@ -32,4 +32,31 @@ app.post("/transaction", blockchainController.createTransaction);
  */
 app.get("/mine", blockchainController.mineBlock);
 
+/**
+ * @route POST /register-and-broadcast-node
+ * @desc Register a node and broadcast it
+ * @access Public
+ */
+
+app.post(
+  "/register-and-broadcast-node",
+  blockchainController.registerAndBroadcast
+);
+
+/**
+ * @route POST /register-node
+ * @desc Register the new node with the network that was broadcasted
+ * @access Public
+ */
+
+app.post("/register-node", blockchainController.registerNode);
+
+/**
+ * @route POST /register-nodes-bulk
+ * @desc Register multiple nodes at once
+ * @access Public
+ */
+
+app.post("/register-nodes-bulk", blockchainController.registerMultipleNodes);
+
 app.listen(port, () => console.log(`server spinning on ${port}`));
