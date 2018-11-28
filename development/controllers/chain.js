@@ -3,6 +3,7 @@
 const Blockchain = require("../blockchain");
 const { OK } = require("http-status-codes");
 const uuid = require("uuid/v1");
+const RP = require("request-promise");
 
 /** This NODE_ADDRESS MUST BE UNIQUE */
 
@@ -54,6 +55,40 @@ exports.mineBlock = (req, res, next) => {
 
 exports.registerAndBroadcast = (req, res, next) => {
   const { NEW_NODE_URL } = req.body;
+  /** Register the new node with the network nodes if it does not exist already
+   * in the network
+   */
+  if (bitcoin.NETWORK_NODES.indexOf(NEW_NODE_URL) <= -1)
+    bitcoin.NETWORK_NODES.push(NEW_NODE_URL);
+
+  const registerNodePromises = [];
+
+  bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
+    /** Hit the /register-node */
+    const options = {
+      uri: `${NETWORK_NODE_URL}/register-node`,
+      method: "POST",
+      body: {
+        NEW_NODE_URL: NEW_NODE_URL
+      },
+      json: true
+    };
+    registerNodePromises.push(RP(options));
+  });
+  Promise.all(registerNodePromises)
+    .then(data => {
+      const bulkRegisterOptions = {
+        uri : `${NEW_NODE_URL}/register-nodes-bulk`,
+        method : 'POST',
+        body : { allNetworkNodes : [...bitcoin.NETWORK_NODES, bitcoin.CURRENT_NODE_URL]},
+        json: true
+      };
+      return RP(bulkRegisterOptions)
+    }).then(data => {
+      res.status(OK).json({
+        message : 'New node registered with the network successfully!'
+      });
+    })
 };
 
 exports.registerNode = (req, res, next) => {};
