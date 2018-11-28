@@ -78,47 +78,54 @@ exports.registerAndBroadcast = (req, res, next) => {
   Promise.all(registerNodePromises)
     .then(data => {
       const bulkRegisterOptions = {
-        uri : `${NEW_NODE_URL}/register-nodes-bulk`,
-        method : 'POST',
-        body : { allNetworkNodes : [...bitcoin.NETWORK_NODES, bitcoin.CURRENT_NODE_URL]},
+        uri: `${NEW_NODE_URL}/register-nodes-bulk`,
+        method: "POST",
+        body: {
+          allNetworkNodes: [...bitcoin.NETWORK_NODES, bitcoin.CURRENT_NODE_URL]
+        },
         json: true
       };
-      return RP(bulkRegisterOptions)
-    }).then(data => {
-      res.status(OK).json({
-        message : 'New node registered with the network successfully!'
-      });
+      return RP(bulkRegisterOptions);
     })
+    .then(data => {
+      res.status(OK).json({
+        message: "New node registered with the network successfully!"
+      });
+    });
 };
 
 exports.registerNode = (req, res, next) => {
-    const { NEW_NODE_URL } = req.body;
-    /**
-     * Check for the existence of the NEW_NODE_URL
-     */ 
-    const nodeNotExists = bitcoin.NETWORK_NODES.indexOf(NEW_NODE_URL) <= -1;
-    /**
-     * Register node on the current node keeping in mind
-     * that the current node url should not match with the new 
-     * node url
-     */
-    const notCurrentNode = bitcoin.CURRENT_NODE_URL !== NEW_NODE_URL;
-    /** If the NEW_NODE_URL does not exists in the NETWORK_NODES
-     * array, then add it to the NETWORK_NODES array */ 
-    
-     if(nodeNotExists && notCurrentNode)
-      bitcoin.NETWORK_NODES.push(NEW_NODE_URL);
-    res.status(OK).json({
-      message : 'New node registered successfully'
-    });
+  const { NEW_NODE_URL } = req.body;
+  /**
+   * Check for the existence of the NEW_NODE_URL
+   */
+
+  const nodeNotExists = bitcoin.NETWORK_NODES.indexOf(NEW_NODE_URL) <= -1;
+  /**
+   * Register node on the current node keeping in mind
+   * that the current node url should not match with the new
+   * node url
+   */
+  const notCurrentNode = bitcoin.CURRENT_NODE_URL !== NEW_NODE_URL;
+  /** If the NEW_NODE_URL does not exists in the NETWORK_NODES
+   * array, then add it to the NETWORK_NODES array */
+
+  if (nodeNotExists && notCurrentNode) bitcoin.NETWORK_NODES.push(NEW_NODE_URL);
+  res.status(OK).json({
+    message: "New node registered successfully"
+  });
 };
 
 exports.registerMultipleNodes = (req, res, next) => {
   const { allNetworkNodes } = req.body;
   allNetworkNodes.forEach(NETWORK_NODE_URL => {
-    const nodeNotAlreadyPresent = bitcoin.NETWORK_NODES.indexOf(NETWORK_NODE_URL) <= -1;
+    const nodeNotAlreadyPresent =
+      bitcoin.NETWORK_NODES.indexOf(NETWORK_NODE_URL) <= -1;
     const notCurrentNode = bitcoin.CURRENT_NODE_URL !== NETWORK_NODE_URL;
-    if(nodeNotAlreadyPresent && notCurrentNode)
+    if (nodeNotAlreadyPresent && notCurrentNode)
       bitcoin.NETWORK_NODES.push(NETWORK_NODE_URL);
-  })
+  });
+  res.status(OK).json({
+    message: "Bulk registration successful"
+  });
 };
