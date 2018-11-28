@@ -91,6 +91,26 @@ exports.registerAndBroadcast = (req, res, next) => {
     })
 };
 
-exports.registerNode = (req, res, next) => {};
+exports.registerNode = (req, res, next) => {
+    const { NEW_NODE_URL } = req.body;
+    /**
+     * Check for the existence of the NEW_NODE_URL
+     */ 
+    const nodeNotExists = bitcoin.NETWORK_NODES.indexOf(NEW_NODE_URL) <= -1;
+    /**
+     * Register node on the current node keeping in mind
+     * that the current node url should not match with the new 
+     * node url
+     */
+    const notCurrentNode = bitcoin.CURRENT_NODE_URL !== NEW_NODE_URL;
+    /** If the NEW_NODE_URL does not exists in the NETWORK_NODES
+     * array, then add it to the NETWORK_NODES array */ 
+    
+     if(nodeNotExists && notCurrentNode)
+      bitcoin.NETWORK_NODES.push(NEW_NODE_URL);
+    res.status(OK).json({
+      message : 'New node registered successfully with the node'
+    });
+};
 
 exports.registerMultipleNodes = (req, res, next) => {};
