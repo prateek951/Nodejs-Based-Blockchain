@@ -109,7 +109,7 @@ exports.registerNode = (req, res, next) => {
      if(nodeNotExists && notCurrentNode)
       bitcoin.NETWORK_NODES.push(NEW_NODE_URL);
     res.status(OK).json({
-      message : 'New node registered successfully with the node'
+      message : 'New node registered successfully'
     });
 };
 
