@@ -26,6 +26,17 @@ app.get("/blockchain", blockchainController.retrieveBlockchain);
 app.post("/transaction", blockchainController.createTransaction);
 
 /**
+ * @route POST /transaction
+ * @desc Not just create a new transaction but also broadcast
+ * that transaction to all other nodes in the network
+ * @access Public
+ *
+ */
+app.post(
+  "/transaction/broadcast",
+  blockchainController.createAndBroadcastTransaction
+);
+/**
  * @route GET /mine
  * @desc Mine a new block (Create a new block)
  * @access Public
