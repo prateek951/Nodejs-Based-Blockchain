@@ -1,16 +1,18 @@
 /** Created by Prateek Madaan on 27 November 2018 */
 /** Continued on 28 November 2018*/
+/** Continued on 7 December 2018*/
 
 /** Import the necessary third party packages */
 const SHA256 = require("sha256");
 const CURRENT_NODE_URL = process.argv[3];
+const uuid = require("uuid/v1");
 
 /** Constructor function for the Blockchain */
 function Blockchain() {
   this.chain = [];
   this.pendingTransactions = [];
   this.CURRENT_NODE_URL = CURRENT_NODE_URL;
-  this.NETWORK_NODES = []
+  this.NETWORK_NODES = [];
   /** Create the genesis block - pass in arbitrary params */
   this.addBlock(100, "0", "0");
 }
@@ -63,13 +65,22 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, receiver) {
   const newTransaction = {
     amount,
     sender,
-    receiver
+    receiver,
+    transactionId: uuid()
+      .split("-")
+      .join("")
   };
-  /** Append the new transaction to the pendingTransactions */
+  return newTransaction;
+};
 
-  this.pendingTransactions.push(newTransaction);
-  /** Return the number of the block to which this transaction will get added to*/
-  return this.getLastBlock()["index"] + 1;
+/**
+ * @desc Utility method to add created transaction to the pending transactions
+ * @param transaction
+ */
+
+Blockchain.prototype.addTransactionToPendingTransactions = transaction => {
+  this.pendingTransactions.push(transaction);
+  return this.getLastBlock()['index'] + 1;
 };
 
 /**
