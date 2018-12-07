@@ -1,6 +1,6 @@
 /** Created by Prateek Madaan on 27 November 2018 */
-/** Continued on 28 November 2018*/
-/** Continued on 7 December 2018*/
+/** Modified on 8 December 2018 by Prateek Madaan */
+
 
 /** Import the necessary third party packages */
 const SHA256 = require("sha256");

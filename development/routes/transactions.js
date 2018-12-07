@@ -1,3 +1,5 @@
+/** Created on 8 December 2018 by Prateek Madaan */ 
+
 const express = require('express');
 
 const Blockchain = require("../blockchain");
@@ -33,7 +35,7 @@ router.post('/broadcast', (req, res, next) => {
 
     /** Broadcast the transaction to all the network nodes */
     bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
-        /** Hit the /register-node */
+  
         const options = {
             uri: `${NETWORK_NODE_URL}/transaction`,
             method: "POST",
