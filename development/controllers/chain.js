@@ -1,4 +1,5 @@
 /** Created by Prateek Madaan on 27 November 2018*/
+/** Modified by Prateek Madaan on 8 December 2018*/
 
 const Blockchain = require("../blockchain");
 const { OK } = require("http-status-codes");
@@ -17,49 +18,47 @@ exports.retrieveBlockchain = (req, res, next) => {
   res.status(OK).send(bitcoin);
 };
 
-exports.createTransaction = (req, res, next) => {
-  /** Tap the amount, sender and the receiver from request body  */
+// exports.createTransaction = (req, res, next) => {
+//   const newTransaction = req.body;
+//   const blockIndex = bitcoin.addTransactionToPendingTransactions(
+//     newTransaction
+//   );
+//   res.status(OK).json({
+//     message: `Transaction will be added in the block ${blockIndex}`
+//   });
+// };
 
-  const { amount, sender, receiver } = req.body;
+// exports.createAndBroadcastTransaction = (req, res, next) => {
+//   /** Tap the amount, sender and the receiver from request body  */
 
-  const blockIndex = bitcoin.createNewTransaction(amount, sender, receiver);
-  res
-    .status(OK)
-    .json({ message: `Transaction will be added in block ${blockIndex}` });
-};
+//   const { amount, sender, receiver } = req.body;
 
-exports.createAndBroadcastTransaction = (req, res, next) => {
-  /** Tap the amount, sender and the receiver from request body  */
+//   /** Create a new transaction */
 
-  const { amount, sender, receiver } = req.body;
-  
-  /** Create a new transaction */ 
-  const newTransaction = bitcoin.createNewTransaction(amount,sender,receiver);
-  
-  /** On this node, add the newTransaction to the pending transactions */
-  bitcoin.addTransactionToPendingTransactions(newTransaction);
+//   const newTransaction = bitcoin.createNewTransaction(amount, sender, receiver);
 
-  const requestPromises = [];
+//   /** On this node, add the newTransaction to the pending transactions */
+//   bitcoin.addTransactionToPendingTransactions(newTransaction);
 
-  /** Broadcast the transaction to all the network nodes */
-  bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
-    /** Hit the /register-node */
-    const options = {
-      uri: `${NETWORK_NODE_URL}/transaction`,
-      method: "POST",
-      body: newTransaction,
-      json: true
-    };
-    requestPromises.push(RP(options));
-  });
-  Promise.all(requestPromises)
-    .then(data => {
-      res.status(OK).json({
-        message : `Transaction created and broadcasted with success`
-      });
-    });
+//   const requestPromises = [];
 
-}
+//   /** Broadcast the transaction to all the network nodes */
+//   bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
+//     /** Hit the /register-node */
+//     const options = {
+//       uri: `${NETWORK_NODE_URL}/transaction`,
+//       method: "POST",
+//       body: newTransaction,
+//       json: true
+//     };
+//     requestPromises.push(RP(options));
+//   });
+//   Promise.all(requestPromises).then(data => {
+//     res.status(OK).json({
+//       message: `Transaction created and broadcasted with success`
+//     });
+//   });
+// };
 
 exports.mineBlock = (req, res, next) => {
   console.log("hooked up...");

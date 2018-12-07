@@ -4,6 +4,7 @@ const express = require("express");
 const app = express();
 const port = process.argv[2];
 const blockchainController = require("./controllers/chain");
+const transactionRoutes = require('./routes/transactions');
 
 /** Parsing incoming request body */
 app.use(express.json());
@@ -23,19 +24,19 @@ app.get("/blockchain", blockchainController.retrieveBlockchain);
  * @access Public
  */
 
-app.post("/transaction", blockchainController.createTransaction);
-
+// app.post("/transaction", blockchainController.createTransaction);
+app.use("/transaction",transactionRoutes);
 /**
- * @route POST /transaction
+ * @route POST /transaction/broadcast
  * @desc Not just create a new transaction but also broadcast
  * that transaction to all other nodes in the network
  * @access Public
  *
  */
-app.post(
-  "/transaction/broadcast",
-  blockchainController.createAndBroadcastTransaction
-);
+// app.post(
+//   "/transaction/broadcast",
+//   blockchainController.createAndBroadcastTransaction
+// );
 /**
  * @route GET /mine
  * @desc Mine a new block (Create a new block)
