@@ -6,6 +6,9 @@ const port = process.argv[2];
 const blockchainController = require("./controllers/chain");
 const transactionRoutes = require('./routes/transactions');
 
+/** Import the utils */
+const { END_POINTS: endpoints } = require('./utils/endpoints');
+
 /** Parsing incoming request body */
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -16,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
  * @access Public
  */
 
-app.get("/blockchain", blockchainController.retrieveBlockchain);
+app.get(endpoints.viewBlockchain, blockchainController.retrieveBlockchain);
 
 /**
  * @route POST /transaction
@@ -25,7 +28,7 @@ app.get("/blockchain", blockchainController.retrieveBlockchain);
  */
 
 // app.post("/transaction", blockchainController.createTransaction);
-app.use("/transaction",transactionRoutes);
+app.use(endpoints.pertainingToTransaction,transactionRoutes);
 /**
  * @route POST /transaction/broadcast
  * @desc Not just create a new transaction but also broadcast
@@ -42,7 +45,7 @@ app.use("/transaction",transactionRoutes);
  * @desc Mine a new block (Create a new block)
  * @access Public
  */
-app.get("/mine", blockchainController.mineBlock);
+app.get(endpoints.mine, blockchainController.mineBlock);
 
 /**
  * @route POST /register-and-broadcast-node
@@ -51,7 +54,7 @@ app.get("/mine", blockchainController.mineBlock);
  */
 
 app.post(
-  "/register-and-broadcast-node",
+  endpoints.registerAndBroadcast,
   blockchainController.registerAndBroadcast
 );
 
@@ -61,7 +64,7 @@ app.post(
  * @access Public
  */
 
-app.post("/register-node", blockchainController.registerNode);
+app.post(endpoints.registerNode, blockchainController.registerNode);
 
 /**
  * @route POST /register-nodes-bulk
@@ -69,6 +72,6 @@ app.post("/register-node", blockchainController.registerNode);
  * @access Public
  */
 
-app.post("/register-nodes-bulk", blockchainController.registerMultipleNodes);
+app.post(endpoints.registerNodeBulk, blockchainController.registerMultipleNodes);
 
 app.listen(port, () => console.log(`server spinning on ${port}`));
