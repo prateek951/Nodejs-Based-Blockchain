@@ -47,6 +47,15 @@ app.use(endpoints.pertainingToTransaction,transactionRoutes);
  */
 app.get(endpoints.mine, blockchainController.mineBlock);
 
+
+/**
+ * @route POST /receive-new-block
+ * @desc Receive the new block that was broadcasted
+ * @access Public
+ */
+app.post(endpoints.receiveNewBlock,blockchainController.receiveNewBlock);
+
+
 /**
  * @route POST /register-and-broadcast-node
  * @desc Register a node and broadcast it

@@ -5,6 +5,7 @@ module.exports = {
         mine : "/mine",
         registerAndBroadcast: "/register-and-broadcast-node",
         registerNode: "/register-node",
-        registerNodeBulk: "/register-nodes-bulk"
+        registerNodeBulk: "/register-nodes-bulk",
+        receiveNewBlock : "/receive-new-block"
     }
 };

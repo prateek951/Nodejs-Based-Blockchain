@@ -2,7 +2,7 @@
 /** Modified by Prateek Madaan on 8 December 2018*/
 
 const Blockchain = require("../blockchain");
-const { OK } = require("http-status-codes");
+const { OK, INTERNAL_SERVER_ERROR } = require("http-status-codes");
 const uuid = require("uuid/v1");
 const RP = require("request-promise");
 
@@ -75,15 +75,67 @@ exports.mineBlock = (req, res, next) => {
     nonce
   );
 
-  /**  Reward the miner with 12.5 BTC*/
-  bitcoin.createNewTransaction(12.5, "00", NODE_ADDRESS);
   /** Now mine a new block */
   const newBlock = bitcoin.addBlock(nonce, previousBlockHash, blockHash);
+  const requestPromises = [];
+  /** Broadcast the newBlock to all other nodes in the network */
 
-  res
-    .status(OK)
-    .json({ message: "New Block Mined Successfully!", block: newBlock });
+  bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
+    const options = {
+      uri: `${NETWORK_NODE_URL}/receive-new-block`,
+      method: "POST",
+      body: { newBlock },
+      json: true
+    };
+    requestPromises.push(RP(options));
+  });
+  Promise.all(requestPromises)
+    .then(data => {
+      const options = {
+        uri: `${bitcoin.CURRENT_NODE_URL}/transaction/broadcast`,
+        method: "POST",
+        body: {
+          amount: 12.5,
+          sender: "00",
+          receiver: NODE_ADDRESS
+        },
+        json: true
+      };
+      return RP(options);
+    })
+    .then(data => {
+      res.status(OK).json({
+        message: "New block mined & broadcasted with success",
+        block: newBlock
+      });
+    });
 };
+
+
+exports.receiveNewBlock = (req, res, next) => {
+  const { newBlock:block } = req.body;
+  const lastBlock = bitcoin.getLastBlock();
+  /** Check for the validity of the incoming block */ 
+  const isValid = lastBlock.hash === block.previousBlockHash;
+  /** Check whether the newBlock is immediately next to the last block */ 
+  const isNext = lastBlock['index'] + 1 === block['index'];
+  if(isValid && isNext) {
+    /** New block is legitimate */ 
+    bitcoin.chain.push(block);
+    /** Clear the pending transactions */
+    bitcoin.pendingTransactions = [];
+    res.status(OK).json({
+      message : `New Block received and accepted`,
+      newBlock : block
+    }); 
+  } else {
+    res.status(INTERNAL_SERVER_ERROR)
+      .json({
+        message : `New block rejected`,
+        newBlock : block
+      }); 
+  }
+}
 
 exports.registerAndBroadcast = (req, res, next) => {
   const { NEW_NODE_URL } = req.body;
