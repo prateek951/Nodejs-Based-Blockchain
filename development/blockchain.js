@@ -159,25 +159,45 @@ Blockchain.prototype.isChainValid = function(blockchain) {
     const currentBlock = blockchain[i];
     const prevBlock = blockchain[i - 1];
     /** Rehash the block to see whether it starts with 4 zeroes*/
-    const blockHash = this.hashBlock(prevBlock["hash"], {
-      transactions: currentBlock["transactions"],
-      index: currentBlock["index"]
-    },currentBlock["nonce"]);
-    if(blockHash.substring(0,4) !== "0000")
-      valid = false;
-    if(currentBlock['previousBlockHash'] !== prevBlock['hash']) 
-      valid = false;
-      console.log('previousBlockHash =>',prevBlock['hash']);
-      console.log('currentBlockHash => ',currentBlock['hash']);
+    const blockHash = this.hashBlock(
+      prevBlock["hash"],
+      {
+        transactions: currentBlock["transactions"],
+        index: currentBlock["index"]
+      },
+      currentBlock["nonce"]
+    );
+    if (blockHash.substring(0, 4) !== "0000") valid = false;
+    if (currentBlock["previousBlockHash"] !== prevBlock["hash"]) valid = false;
+    console.log("previousBlockHash =>", prevBlock["hash"]);
+    console.log("currentBlockHash => ", currentBlock["hash"]);
   }
   const genesisBlock = blockchain[0];
   const hasCorrectNonce = genesisBlock["nonce"] === 100;
-  const hasCorrectPreviousBlockHash = genesisBlock['previousBlockHash'] === "0";
+  const hasCorrectPreviousBlockHash = genesisBlock["previousBlockHash"] === "0";
   const hasCorrectHash = genesisBlock["hash"] === "0";
   const hasCorrectTransactions = genesisBlock["transactions"].length === 0;
-  if(!hasCorrectNonce || !hasCorrectPreviousBlockHash || !hasCorrectHash || !hasCorrectTransactions)
+  if (
+    !hasCorrectNonce ||
+    !hasCorrectPreviousBlockHash ||
+    !hasCorrectHash ||
+    !hasCorrectTransactions
+  )
     valid = false;
   return valid;
+};
+/**
+ * @desc Utility method to get a specific block of the blockchain by 
+ * the blockHash 
+ * @param blockHash the hash of the block
+ *
+ */
+Blockchain.prototype.getBlock = function(blockHash) {
+  let requiredBlock = null;
+  this.chain.forEach(block => {
+    if (block.hash === blockHash) requiredBlock = block;
+  });
+  return requiredBlock;
 };
 
 /** Export the blockchain for testing and other purposes */
