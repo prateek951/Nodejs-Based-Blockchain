@@ -251,9 +251,17 @@ exports.checkConsensus = (req, res, next) => {
       bitcoin.chain = newLongestChain;
       bitcoin.pendingTransactions = newPendingTransactions;
       res.status(OK).json({
-        message : `Current chain has been replaced`,
-        chain : bitcoin.chain
-      })
+        message: `Current chain has been replaced`,
+        chain: bitcoin.chain
+      });
     }
+  });
+};
+
+exports.getBlockByHash = (req, res, next) => {
+  const { blockHash } = req.params;
+  const requiredBlock = bitcoin.getBlock(blockHash);
+  res.status(OK).json({
+    block: requiredBlock
   });
 };
