@@ -77,7 +77,7 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, receiver) {
  * @param transaction
  */
 
-Blockchain.prototype.addTransactionToPendingTransactions = transaction => {
+Blockchain.prototype.addTransactionToPendingTransactions = function(transaction) {
   this.pendingTransactions.push(transaction);
   return this.getLastBlock()["index"] + 1;
 };
@@ -144,7 +144,7 @@ Blockchain.prototype.PROOF_OF_WORK = function(
  * the chain is valid or not
  *
  */
-Blockchain.prototype.isChainValid = blockchain => {
+Blockchain.prototype.isChainValid = function(blockchain) {
   /**
    * Iterate over the blockchain and for each block
    * check whether the current block's previous hash
