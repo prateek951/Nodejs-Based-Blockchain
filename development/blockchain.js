@@ -1,7 +1,6 @@
 /** Created by Prateek Madaan on 27 November 2018 */
 /** Modified on 8 December 2018 by Prateek Madaan */
 
-
 /** Import the necessary third party packages */
 const SHA256 = require("sha256");
 const CURRENT_NODE_URL = process.argv[3];
@@ -80,7 +79,7 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, receiver) {
 
 Blockchain.prototype.addTransactionToPendingTransactions = transaction => {
   this.pendingTransactions.push(transaction);
-  return this.getLastBlock()['index'] + 1;
+  return this.getLastBlock()["index"] + 1;
 };
 
 /**
@@ -137,6 +136,32 @@ Blockchain.prototype.PROOF_OF_WORK = function(
   }
   /** Return the nonce */
   return nonce;
+};
+
+/**
+ * @desc Utility method to check the validity of the blockchain
+ * @param blockchain will take the blockchain and return whether
+ * the chain is valid or not
+ *
+ */
+Blockchain.prototype.isChainValid = blockchain => {
+  /**
+   * Iterate over the blockchain and for each block
+   * check whether the current block's previous hash
+   * matches with the previous block's hash.If so for
+   * the entire blockchain the method will return true
+   * otherwise the method returns false
+   * */
+  let isMyChainValid = true;
+  for (let i = 0; i < blockchain.length; i++) {
+    const currentBlock = blockchain[i];
+    const previousBlock = blockchain[i - 1];
+    /** Check for the validity of the current block */ 
+    if (currentBlock['previousBlockHash'] !== previousBlock['hash']) {
+      return !isMyChainValid;
+    }
+  }
+  return !!isMyChainValid;
 };
 
 /** Export the blockchain for testing and other purposes */
