@@ -153,7 +153,7 @@ Blockchain.prototype.isChainValid = blockchain => {
    * otherwise the method returns false
    * */
   let isMyChainValid = true;
-  for (let i = 0; i < blockchain.length; i++) {
+  for (let i = 1; i < blockchain.length; i++) {
     const currentBlock = blockchain[i];
     const previousBlock = blockchain[i - 1];
     const blockHash = this.hashBlock(
@@ -168,14 +168,21 @@ Blockchain.prototype.isChainValid = blockchain => {
      * it is valid*/
 
     if (blockHash.substring(0, 4) !== "0000") {
-      return !isMyChainValid;
+      isMyChainValid =  !isMyChainValid;
     }
     /** Check for the validity of the current block */
 
     if (currentBlock["previousBlockHash"] !== previousBlock["hash"]) {
-      return !isMyChainValid;
+      isMyChainValid =  !isMyChainValid;
     }
   }
+  /** Get the genesis block and check whether it is still the same*/
+  const genesisBlock = blockchain[0];
+  const hasCorrectNonce = genesisBlock['nonce'] === 100;
+  const hasCorrectPreviousBlockHash = genesisBlock['previousBlockHash'] === "0";
+  const hasCorrectHash = genesisBlock['hash'] === "0";
+  const hasCorrectTransactions = genesisBlock['transactions'].length === 0;
+  isMyChainValid = hasCorrectNonce &&  hasCorrectPreviousBlockHash && hasCorrectHash && hasCorrectTransactions;
   return !!isMyChainValid;
 };
 
