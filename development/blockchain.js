@@ -200,5 +200,30 @@ Blockchain.prototype.getBlock = function(blockHash) {
   return requiredBlock;
 };
 
+/**
+ * @desc Utility method to get a specific transaction by its 
+ * transactionId
+ * @param transactionId   The id of the transaction
+ *
+ */
+
+Blockchain.prototype.getTransactionById = function(transactionId) { 
+  let requiredTransaction = null;
+  let requiredBlock = null;
+  this.chain.forEach(block => {
+    block.transactions.forEach(transaction => {
+      if(transaction.transactionId === transactionId) { 
+          requiredTransaction = transaction;
+          requiredBlock = block;
+        }
+    });
+  })
+  return {
+    transaction : requiredTransaction,
+    block : requiredBlock
+  }
+}
+
+
 /** Export the blockchain for testing and other purposes */
 module.exports = Blockchain;
