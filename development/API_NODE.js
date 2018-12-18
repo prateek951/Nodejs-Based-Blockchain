@@ -83,4 +83,12 @@ app.post(endpoints.registerNode, blockchainController.registerNode);
 
 app.post(endpoints.registerNodeBulk, blockchainController.registerMultipleNodes);
 
+
+/**
+ * @route GET /consensus
+ * @desc Consensus End point
+ * @access Public
+ */
+app.get(endpoints.checkConsensus,blockchainController.checkConsensus);
+
 app.listen(port, () => console.log(`server spinning on ${port}`));

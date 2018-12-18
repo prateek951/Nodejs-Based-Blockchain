@@ -77,7 +77,9 @@ Blockchain.prototype.createNewTransaction = function(amount, sender, receiver) {
  * @param transaction
  */
 
-Blockchain.prototype.addTransactionToPendingTransactions = function(transaction) {
+Blockchain.prototype.addTransactionToPendingTransactions = function(
+  transaction
+) {
   this.pendingTransactions.push(transaction);
   return this.getLastBlock()["index"] + 1;
 };
@@ -152,38 +154,30 @@ Blockchain.prototype.isChainValid = function(blockchain) {
    * the entire blockchain the method will return true
    * otherwise the method returns false
    * */
-  let isMyChainValid = true;
-  for (let i = 1; i < blockchain.length; i++) {
+  let valid = true;
+  for (var i = 1; i < blockchain.length; i++) {
     const currentBlock = blockchain[i];
-    const previousBlock = blockchain[i - 1];
-    const blockHash = this.hashBlock(
-      previousBlock["hash"],
-      {
-        transactions: currentBlock["transactions"],
-        index: currentBlock["index"]
-      },
-      currentBlock["nonce"]
-    );
-    /** Rehash the current block again and if the blockHash does not starts with 4 zeroes it is invalid otherwise
-     * it is valid*/
-
-    if (blockHash.substring(0, 4) !== "0000") {
-      isMyChainValid =  !isMyChainValid;
-    }
-    /** Check for the validity of the current block */
-
-    if (currentBlock["previousBlockHash"] !== previousBlock["hash"]) {
-      isMyChainValid =  !isMyChainValid;
-    }
+    const prevBlock = blockchain[i - 1];
+    /** Rehash the block to see whether it starts with 4 zeroes*/
+    const blockHash = this.hashBlock(prevBlock["hash"], {
+      transactions: currentBlock["transactions"],
+      index: currentBlock["index"]
+    },currentBlock["nonce"]);
+    if(blockHash.substring(0,4) !== "0000")
+      valid = false;
+    if(currentBlock['previousBlockHash'] !== prevBlock['hash']) 
+      valid = false;
+      console.log('previousBlockHash =>',prevBlock['hash']);
+      console.log('currentBlockHash => ',currentBlock['hash']);
   }
-  /** Get the genesis block and check whether it is still the same*/
   const genesisBlock = blockchain[0];
-  const hasCorrectNonce = genesisBlock['nonce'] === 100;
+  const hasCorrectNonce = genesisBlock["nonce"] === 100;
   const hasCorrectPreviousBlockHash = genesisBlock['previousBlockHash'] === "0";
-  const hasCorrectHash = genesisBlock['hash'] === "0";
-  const hasCorrectTransactions = genesisBlock['transactions'].length === 0;
-  isMyChainValid = hasCorrectNonce &&  hasCorrectPreviousBlockHash && hasCorrectHash && hasCorrectTransactions;
-  return !!isMyChainValid;
+  const hasCorrectHash = genesisBlock["hash"] === "0";
+  const hasCorrectTransactions = genesisBlock["transactions"].length === 0;
+  if(!hasCorrectNonce || !hasCorrectPreviousBlockHash || !hasCorrectHash || !hasCorrectTransactions)
+    valid = false;
+  return valid;
 };
 
 /** Export the blockchain for testing and other purposes */

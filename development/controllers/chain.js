@@ -111,31 +111,32 @@ exports.mineBlock = (req, res, next) => {
     });
 };
 
-
 exports.receiveNewBlock = (req, res, next) => {
-  const { newBlock:block } = req.body;
+  const { newBlock: block } = req.body;
   const lastBlock = bitcoin.getLastBlock();
-  /** Check for the validity of the incoming block */ 
+  /** Check for the validity of the incoming block */
+
   const isValid = lastBlock.hash === block.previousBlockHash;
-  /** Check whether the newBlock is immediately next to the last block */ 
-  const isNext = lastBlock['index'] + 1 === block['index'];
-  if(isValid && isNext) {
-    /** New block is legitimate */ 
+  /** Check whether the newBlock is immediately next to the last block */
+
+  const isNext = lastBlock["index"] + 1 === block["index"];
+  if (isValid && isNext) {
+    /** New block is legitimate */
+
     bitcoin.chain.push(block);
     /** Clear the pending transactions */
     bitcoin.pendingTransactions = [];
     res.status(OK).json({
-      message : `New Block received and accepted`,
-      newBlock : block
-    }); 
+      message: `New Block received and accepted`,
+      newBlock: block
+    });
   } else {
-    res.status(INTERNAL_SERVER_ERROR)
-      .json({
-        message : `New block rejected`,
-        newBlock : block
-      }); 
+    res.status(INTERNAL_SERVER_ERROR).json({
+      message: `New block rejected`,
+      newBlock: block
+    });
   }
-}
+};
 
 exports.registerAndBroadcast = (req, res, next) => {
   const { NEW_NODE_URL } = req.body;
@@ -211,5 +212,48 @@ exports.registerMultipleNodes = (req, res, next) => {
   });
   res.status(OK).json({
     message: "Bulk registration successful"
+  });
+};
+
+exports.checkConsensus = (req, res, next) => {
+  const requestPromises = [];
+  bitcoin.NETWORK_NODES.forEach(NETWORK_NODE_URL => {
+    const options = {
+      uri: `${NETWORK_NODE_URL}/blockchain`,
+      methods: "GET",
+      json: true
+    };
+    requestPromises.push(RP(options));
+  });
+  Promise.all(requestPromises).then(blockchains => {
+    /** Length of the blockchain on the current node*/
+    const currentChainLength = bitcoin.chain.length;
+    let maxChainLength = currentChainLength;
+    let newLongestChain = null;
+    let newPendingTransactions = null;
+    blockchains.forEach(blockchain => {
+      if (blockchain.chain.length > maxChainLength) {
+        maxChainLength = blockchain.chain.length;
+        newLongestChain = blockchain.chain;
+        newPendingTransactions = blockchain.pendingTransactions;
+      }
+    });
+    if (
+      !newLongestChain ||
+      (newLongestChain && !bitcoin.isChainValid(newLongestChain))
+    ) {
+      newLongestChain = bitcoin.chain;
+      res.status(OK).json({
+        message: `Current chain has not been replaced`,
+        chain: newLongestChain
+      });
+    } else if (newLongestChain && bitcoin.isChainValid(newLongestChain)) {
+      bitcoin.chain = newLongestChain;
+      bitcoin.pendingTransactions = newPendingTransactions;
+      res.status(OK).json({
+        message : `Current chain has been replaced`,
+        chain : bitcoin.chain
+      })
+    }
   });
 };

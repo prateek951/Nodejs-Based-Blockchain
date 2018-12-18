@@ -6,7 +6,7 @@ const Blockchain = require("./blockchain");
 
 const bitcoin = new Blockchain();
 
-const MY_BC = {
+const BC = {
     "chain": [
         {
             "index": 1,
@@ -139,4 +139,4 @@ const MY_BC = {
     "NETWORK_NODES": []
 };
 
-console.log(`Is my chain valid ? ${bitcoin.isChainValid(MY_BC.chain)}`);
+console.log(`Is my chain valid : ${bitcoin.isChainValid(BC.chain)}`);
