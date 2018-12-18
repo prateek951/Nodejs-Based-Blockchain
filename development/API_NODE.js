@@ -116,6 +116,6 @@ app.get(endpoints.getTransactionById,blockchainController.getTransactionById);
  * @desc Returns the transactions with current balance corresponding to the address
  * @access Public
  */
-app.get(endpoints.getTransactionInfoByAddress,blockchainController.getTransactionInfoByAddress);
+app.get(endpoints.getTransactionInfoByAddress,blockchainController.getTransactionInfoByAddress) ;
 
 app.listen(port, () => console.log(`server spinning on ${port}`));

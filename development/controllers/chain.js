@@ -265,3 +265,24 @@ exports.getBlockByHash = (req, res, next) => {
     block: requiredBlock
   });
 };
+
+exports.getTransactionById = (req, res, next) => {
+  const transactionInfo = bitcoin.getTransactionById(req.params.transactionId);
+  const { transaction, block } = transactionInfo;
+  res.status(OK).json({
+    transaction,
+    block
+  });
+};
+
+exports.getTransactionInfoByAddress = (req, res, next) => {
+  const { address } = req.params;
+  const {
+    addressTransactions: addressTransactions,
+    addressBalance: balance
+  } = bitcoin.getAddressData(address);
+  res.status(OK).json({
+    transactions: addressTransactions,
+    balance: addressBalance
+  });
+};

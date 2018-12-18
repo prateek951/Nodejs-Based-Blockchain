@@ -187,8 +187,8 @@ Blockchain.prototype.isChainValid = function(blockchain) {
   return valid;
 };
 /**
- * @desc Utility method to get a specific block of the blockchain by 
- * the blockHash 
+ * @desc Utility method to get a specific block of the blockchain by
+ * the blockHash
  * @param blockHash the hash of the block
  *
  */
@@ -201,29 +201,56 @@ Blockchain.prototype.getBlock = function(blockHash) {
 };
 
 /**
- * @desc Utility method to get a specific transaction by its 
+ * @desc Utility method to get a specific transaction by its
  * transactionId
  * @param transactionId   The id of the transaction
  *
  */
 
-Blockchain.prototype.getTransactionById = function(transactionId) { 
+Blockchain.prototype.getTransactionById = function(transactionId) {
   let requiredTransaction = null;
   let requiredBlock = null;
   this.chain.forEach(block => {
     block.transactions.forEach(transaction => {
-      if(transaction.transactionId === transactionId) { 
-          requiredTransaction = transaction;
-          requiredBlock = block;
-        }
+      if (transaction.transactionId === transactionId) {
+        requiredTransaction = transaction;
+        requiredBlock = block;
+      }
     });
-  })
+  });
   return {
-    transaction : requiredTransaction,
-    block : requiredBlock
-  }
-}
+    transaction: requiredTransaction,
+    block: requiredBlock
+  };
+};
 
+/**
+ * @desc Utility method to get address data for an address
+ * @param address as the parameter
+ *
+ */
+Blockchain.prototype.getAddressData = function(address) {
+  const addressTransactions = [];
+  this.chain.forEach(block => {
+    block.transactions.forEach(transaction => {
+      if(transaction.sender === address || transaction.receiver === address) {
+        addressTransactions.push(transaction);
+      }
+    });
+  });
+  let balance = 0;
+  addressTransactions.forEach(transaction => {
+    if (transaction.receiver === address) {
+      balance += transaction.amount;
+    } else if (transaction.sender === address) {
+      balance -= transaction.amount;
+    }
+  });
+  return { 
+    addressTransactions : addressTransactions,
+    addressBalance : balance
+  }
+};
 
 /** Export the blockchain for testing and other purposes */
 module.exports = Blockchain;
