@@ -7,6 +7,9 @@ module.exports = {
     registerNode: "/register-node",
     registerNodeBulk: "/register-nodes-bulk",
     receiveNewBlock: "/receive-new-block",
-    checkConsensus: "/consensus"
+    checkConsensus: "/consensus",
+    getBlockByHash: "/block/:blockHash",
+    getTransactionById : "/transaction/:transactionId",
+    getTransactionInfoByAddress : "/address/:address"
   }
 };

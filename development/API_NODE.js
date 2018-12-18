@@ -91,4 +91,31 @@ app.post(endpoints.registerNodeBulk, blockchainController.registerMultipleNodes)
  */
 app.get(endpoints.checkConsensus,blockchainController.checkConsensus);
 
+
+/**
+* Routes for the block explorer
+*/ 
+
+/**
+ * @route GET /block/:blockHash
+ * @desc Returns the block corresponding to the blockHash
+ * @access Public
+ */
+app.get(endpoints.getBlockByHash,blockchainController.getBlockByHash);
+
+
+/**
+ * @route GET /transaction/:transactionId
+ * @desc Returns the transaction corresponding to the transactionId
+ * @access Public
+ */
+app.get(endpoints.getTransactionById,blockchainController.getTransactionById);
+
+/**
+ * @route GET /address/:address
+ * @desc Returns the transactions with current balance corresponding to the address
+ * @access Public
+ */
+app.get(endpoints.getTransactionInfoByAddress,blockchainController.getTransactionInfoByAddress);
+
 app.listen(port, () => console.log(`server spinning on ${port}`));

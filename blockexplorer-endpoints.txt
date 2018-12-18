@@ -1,0 +1,13 @@
+BlockExplorer Endpoints 
+
+GET /block/:blockHash   
+
+Returns the block corresponding to the blockHash 
+
+GET /transaction/:transactionId   
+
+Returns the transaction corresponding to transactionId
+
+GET /address/:address      
+
+ Returns the transactions with current balance corresponding to the address 
